@@ -1,0 +1,10 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+.App {
+  margin: 5rem;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
