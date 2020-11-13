@@ -4,8 +4,10 @@ import {fetchQuizQuestions } from './API'
 import QuestionCard from './components/QuestionCard';
 // types
 import { QuestionState, Difficulty } from './API'
+// styles
+import { GlobalStyle, Wrapper } from './App.styles'
 
-type AnswerObject = {
+export type AnswerObject = {
   question: string;
   answer: string;
   correct: boolean;
@@ -53,43 +55,51 @@ const App = () => {
         correct,
         correctAnswer: questions[number].correct_answer
       }
+      setUserAnswers(prev => [...prev, answerObject])
     }
-
   };
 
   const nextQuestion = () => {
-  
+    // move on to next question if not last question
+    const nextQuestion = number + 1;
+    if (nextQuestion === TOTAL_QUESITONS) { 
+      setGameOver(true)
+    } else {
+      setNumber(nextQuestion)
+    }
   };
 
   return (
-    <div className="App">
-      <h1>REACT QUIZ</h1>
-      {gameOver || userAnswers.length === TOTAL_QUESITONS ?
-        <button className="start" onClick={startTrivia}>Start</button>
-        : null}
-      
-      {!gameOver ? <p className="score"> Score:</p> : null}
-      {loading && <p>Loading Questions ...</p>}
-      {!loading && !gameOver && (
-        <QuestionCard
-          questionNr={number + 1}
-          totalQuestions={TOTAL_QUESITONS}
-          question={questions[number].question}
-          answers={questions[number].answers}
-          userAnswer={userAnswers ? userAnswers[number] : undefined}
-          callback={checkAnswer}
-        />
-      )}
-      {!gameOver &&
-        !loading &&
-          userAnswers.length === number + 1 &&
-            number !== TOTAL_QUESITONS - 1 ? 
-              <button className="next" onClick={nextQuestion}>Next Question</button>
-                : null}
-    </div>
+    <>
+      <GlobalStyle />
+      <Wrapper>
+        <h1>REACT QUIZ</h1>
+        {gameOver || userAnswers.length === TOTAL_QUESITONS ?
+          <button className="start" onClick={startTrivia}>Start</button>
+          : null}
+        
+        {!gameOver ? <p className="score"> Score: {score}</p> : null}
+        {loading && <p>Loading Questions ...</p>}
+        {!loading && !gameOver && (
+          <QuestionCard
+            questionNr={number + 1}
+            totalQuestions={TOTAL_QUESITONS}
+            question={questions[number].question}
+            answers={questions[number].answers}
+            userAnswer={userAnswers ? userAnswers[number] : undefined}
+            callback={checkAnswer}
+          />
+        )}
+        {!gameOver &&
+          !loading &&
+            userAnswers.length === number + 1 &&
+              number !== TOTAL_QUESITONS - 1 ? 
+                <button className="next" onClick={nextQuestion}>Next Question</button>
+                  : null}
+      </Wrapper>
+    </>
   );
 }
 
 export default App;
 
-// api url https://opentdb.com/api.php?amount=10&type=multiple
